@@ -1,8 +1,8 @@
-Total_Energy_Consumption;1957.349986267087
+Total_Energy_Consumption;70.44999999999709
 Total_Energy_Production;67884.589
-Number_of_Timeseries;11
+Number_of_Timeseries;8
 Energy_charged;70.45
-Self_Consumption;0.8601370075448578
+Self_Consumption;0.8373769145308925
 Assigned Start Time List;{}
 ast_lst_List;{}
 AstLstContraintRespected;{}
