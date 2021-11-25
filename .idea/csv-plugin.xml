@@ -276,6 +276,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\SImulations\08_16_21_11\output\checks\kpi.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\SImulations\08_16_21_11_booking\output\checks\kpi.csv">
           <value>
             <Attribute>

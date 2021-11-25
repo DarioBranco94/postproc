@@ -65,7 +65,8 @@ class Checker:
     actualFlexibilityIndex = 0
     V2GFlexibilityIndex = 0
     evList = {}
-
+    selfsuff = 0
+    peakToAverage = 0
     def doChecks(self, path, startTime, pathXML, pathVisualizer):
         """
         Args:
@@ -112,6 +113,7 @@ class Checker:
                     self.consumerResampled[key] = ut.generatePowerTimeSeries(key, startTime)
         print(self.consumerResampled)
         self.calculateSelfConsumption()
+        self.calculatePeakToAverage()
         self.readNeighborhoodXML(pathXML, startTime)
 
         self.readLoadXML(pathXML, startTime)
@@ -275,24 +277,49 @@ class Checker:
                     except:
                         None
 
+
+    def calculatePeakToAverage(self):
+        totalpowTS = []
+        for i in range(288):
+            tempCon = 0
+            for key, power in self.consumerResampled.items():
+                tempCon += power[i]
+            totalpowTS.append(tempCon)
+        energy = 0
+        peakPow = totalpowTS[0]
+        for element in totalpowTS:
+            energy += element*(300/3600)
+            if(element>peakPow):
+                peakPow = element
+        meanPow = energy/24
+        if(meanPow!= 0):
+            self.peakToAverage = peakPow/meanPow
+        else:
+            self.peakToAverage = 9999999
+
     def calculateSelfConsumption(self):
+        totalcon = 0
         for i in range(288):
             tempCon = 0
             tempProd = 0
-            for key, energy in self.consumerResampled.items():
-                print(energy[20])
-                tempCon += energy[i]
-            for key, energy in self.pvListResampled.items():
-                tempProd += energy[i]
+            for key, power in self.consumerResampled.items():
+                tempCon += power[i]
+            for key, power in self.pvListResampled.items():
+                tempProd += power[i]
             if (tempCon < tempProd):
                 self.selfConsumedEnergy += tempCon
             else:
                 self.selfConsumedEnergy += tempProd
+            totalcon += tempCon
             self.totalProd += tempProd
         if (self.totalProd != 0):
             self.selfC = self.selfConsumedEnergy / self.totalProd
         else:
             self.selfC = 0
+        if (totalcon != 0):
+            self.selfsuff = self.selfConsumedEnergy / totalcon
+        else:
+            self.selfsuff = 0
 
     def readConsumptionProduction(self, allfiles, dictionary):
         """
@@ -520,7 +547,8 @@ class Checker:
             param_writer = csv.writer(csv_file, delimiter=' ', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             param_writer.writerow(["NumberOfEV_GC5.1", str(len(self.evList))])
             param_writer.writerow(["NumberOfCPGC5.2", str(self.cpNum)])
-            param_writer.writerow(["Self_Consumption_GC5.14", str(self.selfC)])
+            param_writer.writerow(["Self_Consumption_GC5.14.1", str(self.selfC)])
+            param_writer.writerow(["Self_Consumption_GC5.14.2", str(self.selfsuff)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.1", str(self.KPI531)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.2", str(self.KPI532)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.3", str(self.KPI533)])
@@ -528,22 +556,28 @@ class Checker:
             param_writer.writerow(["ChargingFlexibility5.13.2", str(self.actualFlexibilityIndex)])
             param_writer.writerow(["ChargingFlexibility5.13.3", str(self.V2GFlexibilityIndex)])
             param_writer.writerow(["shareOfBatteryCapacity5.4", str(self.shareOfBatteryCapacity)])
+            param_writer.writerow(["PeakToAverage5.10", str(self.peakToAverage)])
 
         with open(path + "/checks/kpis.js", "w") as json_file:
             json_file.write("kpis_values={rows:[")
             json_file.write('{id:1,data:[ "GC5.1","Number Of EVs",' + str(len(self.evList)) + ']},')
             json_file.write('{id:2,data:[ "GC5.2","Number Of CP",' + str(self.cpNum) + ']},')
-            json_file.write('{id:3,data:[ "GC5.14","Self Consumption",' + str(self.selfC) + ']},')
-            json_file.write('{id:4,data:[ "GC5.3.1","Utilisation Of CPs",' + str(self.KPI531) + ']},')
-            json_file.write('{id:5,data:[ "GC5.3.2","Utilisation Of CPs",' + str(self.KPI532) + ']},')
-            json_file.write('{id:6,data:[ "GC5.3.3","Utilisation Of CPs",' + str(self.KPI533) + ']},')
+            json_file.write('{id:3,data:[ "GC5.14.1","Self Consumption",' + str(self.selfC) + ']},')
+            json_file.write('{id:4,data:[ "GC5.14.2","Self Consumption",' + str(self.selfsuff) + ']},')
+
+            json_file.write('{id:5,data:[ "GC5.3.1","Utilisation Of CPs",' + str(self.KPI531) + ']},')
+            json_file.write('{id:6,data:[ "GC5.3.2","Utilisation Of CPs",' + str(self.KPI532) + ']},')
+            json_file.write('{id:7,data:[ "GC5.3.3","Utilisation Of CPs",' + str(self.KPI533) + ']},')
             json_file.write(
-                '{id:7,data:[ "GC5.13.1","Charging Flexibility",' + str(self.offeredFlexibilityIndex) + ']},')
+                '{id:8,data:[ "GC5.13.1","Charging Flexibility",' + str(self.offeredFlexibilityIndex) + ']},')
             json_file.write(
-                '{id:8,data:[ "GC5.13.2","Charging Flexibility",' + str(self.actualFlexibilityIndex) + ']},')
+                '{id:9,data:[ "GC5.13.2","Charging Flexibility",' + str(self.actualFlexibilityIndex) + ']},')
             json_file.write('{id:9,data:[ "GC5.13.3","Charging Flexibility",' + str(self.V2GFlexibilityIndex) + ']},')
             json_file.write(
                 '{id:10,data:[ "GC5.4","Share Of Battery Capacity",' + str(self.shareOfBatteryCapacity) + ']},')
+            json_file.write(']};')
+            json_file.write(
+                '{id:11,data:[ "GC5.10","Peak To Average",' + str(self.peakToAverage) + ']},')
             json_file.write(']};')
 
     def get_test_value(self):
