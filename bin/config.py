@@ -42,7 +42,6 @@ class Configuration:
     listEvent = []
     pathneighbor = 0
     pathload2 = 0
-    print(os.listdir('../'))
     config_file = './config.yml'
     parameters = None
     mydir = None

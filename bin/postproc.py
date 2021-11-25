@@ -111,7 +111,6 @@ class Checker:
                     self.consumerResampled[key] = ut.generatePowerTimeSeries(key, startTime)
                 else:
                     self.consumerResampled[key] = ut.generatePowerTimeSeries(key, startTime)
-        print(self.consumerResampled)
         self.calculateSelfConsumption()
         self.calculatePeakToAverage()
         self.readNeighborhoodXML(pathXML, startTime)
@@ -139,7 +138,6 @@ class Checker:
 
         for element in xnew:
             xhh.append(time.strftime('%H:%M', time.localtime(element-7200))) #aggiusto la timezone
-        print(xhh)
         for key,element in self.consumerResampled.items():
             plt.plot(xhh,element)
         for key,element in self.pvListResampled.items():
@@ -368,7 +366,6 @@ class Checker:
                     csv_name = path + '/SH/' + splittedMessage[6].split('/')[-1]
                     self.powerPeakListFiles[id] = csv_name
                 ev_dict = json.loads(line[4:])
-                print(ev_dict['message']['subject'])
                 if (ev_dict['message']['subject'] == "EV"):
                     id = ev_dict['message']['id'].split(':')[1]
                     csv_name = path + '/EV/' + ev_dict['message']['id'].split(":")[0] + "_" + ev_dict['message']['id'].split(":")[1] + '.csv'
@@ -439,7 +436,6 @@ class Checker:
         connectedTime = 0
         chargingTime = 0
         chargedEnergy = 0
-        print(self.evList)
         for key, ev in self.evList.items():
             with open(ev.profile) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
@@ -449,7 +445,6 @@ class Checker:
                         plug_in_time = float(row[0])
                         first = 1
                     plug_out_time = float(row[0])
-            print(ev.adt)
             connectedTime += ev.adt - ev.aat
             chargingTime += plug_out_time - plug_in_time
             chargedEnergy += ev.capacity * (ev.targetSoc - ev.soc)

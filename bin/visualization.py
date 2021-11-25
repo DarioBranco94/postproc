@@ -645,7 +645,6 @@ def ev2maxself(ev_ce, xx, res_energy, filename):
     """
     ev_energy = ev_ce[-1, 1]
     ev_max_en = (ev_ce[-1, 1] / (ev_ce[-1, 0] - ev_ce[0, 0])) * 600
-    print("ev_demand", ev_energy)
     for i in range(len(res_energy)):
         if res_energy[i] < 0:
             res_energy[i] = 0

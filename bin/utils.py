@@ -119,7 +119,6 @@ def generatePowerTimeSeries(file, startTime):
         startTime:
     """
 
-    print(file)
     endTime = startTime + 86400
     with open(file, newline='') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=",")
@@ -157,7 +156,6 @@ def generatePowerTimeSeries(file, startTime):
     f = interpolate.interp1d(x, y, kind='previous')  # faccio l'interpolazione lineare
     xnew = np.arange(startTime, endTime, 300)  # mi creo il vettore dei tempi con un sample ogni 5 minuti (300 secondi)
     ynew = f(xnew)  # genero la nuova serie di potenze ricampionatew
-    print(xnew)
     #plt.plot(xnew,ynew)
     #plt.show()
     return ynew
