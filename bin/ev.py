@@ -2,6 +2,8 @@
 class EV:
     aat = 0
     adt = 0
+    pat = 0
+    pdt = 0
     soc = 0
     targetSoc = 0
     maxch = 0

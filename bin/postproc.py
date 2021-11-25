@@ -67,6 +67,16 @@ class Checker:
     evList = {}
     selfsuff = 0
     peakToAverage = 0
+    numcharging = 0
+    KPI551 = 0
+    KPI552 = 0
+    KPI553 = 0
+    KPI554 = 0
+    KPI555 = 0
+    KPI556 = 0
+    meanPower = 0
+    peakPower = 0
+    peakTime = 0
     def doChecks(self, path, startTime, pathXML, pathVisualizer):
         """
         Args:
@@ -127,6 +137,7 @@ class Checker:
         self.calculateSHareOfBatteryCapacityForV2G()
         self.calculateChargingFlexibility(startTime)
         self.UtilisationOfCps()
+        self.calculateChargingAvailability(startTime)
         self.plotAll(startTime, path)
         self.writeOutput(path)
 
@@ -208,13 +219,13 @@ class Checker:
         neighborhood = tree.getroot()
         for elem in neighborhood:  # CASE
             if(elem.tag != "fleet"):
-                if (elem.tag == "ChargingPoint"):
+                if (elem.tag == "chargingStation"):
                     self.cpNum += 1
                 for subelement in elem:  # UTENTI
-                    if (subelement.tag == "ChargingPoint"):
+                    if (subelement.tag == "chargingStation"):
                         self.cpNum += 1
                     for subsubelement in subelement:  # charginPoint
-                        if (subsubelement.tag == "ChargingPoint"):
+                        if (subsubelement.tag == "chargingStation"):
                             self.cpNum += 1
             if (elem.tag == "fleet"):
                 for ecar in elem:  # car
@@ -264,16 +275,18 @@ class Checker:
                         #                                  int(subsubelement.find("lst").text) + int(startTime)]
             for ecar in elem:
                 if (ecar.tag == "ecar"):
-                    try:
-                        tempo = '[' + ecar.find("id").text + ']'
-                        self.evList[tempo].aat = float(ecar.find("aat").text)
-                        self.evList[tempo].adt = float(ecar.find("adt").text)
-                        self.evList[tempo].soc = float(ecar.find("soc").text)
-                        self.evList[tempo].targetSoc = float(ecar.find("targetSoc").text)
-                        self.evList[tempo].departureTimeMinusArrivalTimeMinusEnergyDemand = self.evList[tempo].maxch*((float(
-                            self.evList[tempo].adt)-self.evList[tempo].aat)/3600 - (self.evList[tempo].targetSoc-self.evList[tempo].soc)*self.evList[tempo].capacity/1000)*0.5
-                    except:
-                        None
+                    self.numcharging += 1
+
+                    tempo = '[' + ecar.find("id").text + ']'
+                    self.evList[tempo].aat = float(ecar.find("aat").text)
+                    self.evList[tempo].adt = float(ecar.find("adt").text)
+                    self.evList[tempo].pat = float(ecar.find("pat").text)
+                    self.evList[tempo].pdt = float(ecar.find("pdt").text)
+                    self.evList[tempo].soc = float(ecar.find("soc").text)
+                    self.evList[tempo].targetSoc = float(ecar.find("targetSoc").text)
+                    self.evList[tempo].departureTimeMinusArrivalTimeMinusEnergyDemand = self.evList[tempo].maxch*((float(
+                        self.evList[tempo].adt)-self.evList[tempo].aat)/3600 - ((self.evList[tempo].targetSoc-self.evList[tempo].soc)*self.evList[tempo].capacity/100)/self.evList[tempo].maxch)*0.5
+
 
 
     def calculatePeakToAverage(self):
@@ -290,6 +303,8 @@ class Checker:
             if(element>peakPow):
                 peakPow = element
         meanPow = energy/24
+        self.meanPower = meanPow
+        self.peakPower = peakPow
         if(meanPow!= 0):
             self.peakToAverage = peakPow/meanPow
         else:
@@ -374,13 +389,56 @@ class Checker:
                     self.energyChargedWithIdAsKey[id] = self.energyEVDict[csv_name]
                     self.evList[id].profile = csv_name
 
-    def calculateChargingAvailability(self):
-        numEV = len(self.evList)
+    def calculateChargingAvailability(self, startTime):
+        chargedEnergy = 0
+        chargeDemand = 0
+        firstSample = 0
+        lastSample  = 0
+        self.KPI551 = 0
+        self.KPI552 = 0
+        self.KPI553 = 0
+        self.KPI554 = 0
+        self.KPI555 = 0
+        self.KPI556 = 0
+        plugInDelay = 0
+        notFinishedInTime = 0
+        plugOutDelay = 0
+        for key, ev in self.evList.items():
+            with open(ev.profile) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                first = 0
+                for row in csv_reader:
+                    if (first == 0):
+                        plug_in_time = float(row[0])
+                        firstSample = float(row[1])
+                        first = 1
+                    plug_out_time = float(row[0])
+                    lastSample = float(row[1])
+            chargedEnergy += lastSample - firstSample
+            if((lastSample - firstSample) == 0):
+                self.KPI553 +=1
+            if((ev.pat + startTime) > plug_in_time):
+                plugInDelay += ev.pat + startTime - plug_in_time
+            if(plug_out_time > ev.pdt + startTime):
+                notFinishedInTime +=1
+                plugOutDelay += plug_out_time -  (ev.pdt + startTime)
+            chargeDemand += ev.capacity * (ev.targetSoc - ev.soc)/100
+        self.KPI551 = chargedEnergy / chargeDemand
+        if(chargedEnergy >= chargeDemand):
+            self.KPI552 += 1
+        self.KPI553 = self.KPI553/self.numcharging
+        self.KPI554 = plugInDelay/self.numcharging
+        self.KPI555 = notFinishedInTime/self.numcharging
+        self.KPI556 = plugOutDelay/self.numcharging/3600
+
+
 
     def calculateSHareOfBatteryCapacityForV2G(self):
         for key, ev in self.evList.items():
             maxChPow = ev.maxch
             self.shareOfBatteryCapacity += 0.5 * maxChPow * ev.departureTimeMinusArrivalTimeMinusEnergyDemand
+        if(self.shareOfBatteryCapacity <= 0.10):
+            self.shareOfBatteryCapacity = 0
 
     def calculateChargingFlexibility(self, startTime):
         connectedTime = 0
@@ -542,8 +600,8 @@ class Checker:
             param_writer = csv.writer(csv_file, delimiter=' ', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             param_writer.writerow(["NumberOfEV_GC5.1", str(len(self.evList))])
             param_writer.writerow(["NumberOfCPGC5.2", str(self.cpNum)])
-            param_writer.writerow(["Self_Consumption_GC5.14.1", str(self.selfC)])
-            param_writer.writerow(["Self_Consumption_GC5.14.2", str(self.selfsuff)])
+            param_writer.writerow(["Self_Consumption_GC5.14.1", str(self.selfC*100)])
+            param_writer.writerow(["Self_Consumption_GC5.14.2", str(self.selfsuff*100)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.1", str(self.KPI531)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.2", str(self.KPI532)])
             param_writer.writerow(["UtilisationOfCPsGC5.3.3", str(self.KPI533)])
@@ -551,14 +609,22 @@ class Checker:
             param_writer.writerow(["ChargingFlexibility5.13.2", str(self.actualFlexibilityIndex)])
             param_writer.writerow(["ChargingFlexibility5.13.3", str(self.V2GFlexibilityIndex)])
             param_writer.writerow(["shareOfBatteryCapacity5.4", str(self.shareOfBatteryCapacity)])
-            param_writer.writerow(["PeakToAverage5.10", str(self.peakToAverage)])
-
+            param_writer.writerow(["PeakToAverage5.10.1", str(self.peakToAverage)])
+            param_writer.writerow(["PeakToAverage (AVERAGE POWER) 5.10.2", str(self.meanPower)])
+            param_writer.writerow(["PeakToAverage (PEAK POWER) 5.10.3", str(self.peakPower)])
+            param_writer.writerow(["NumOfCharging5.3.4", str(self.numcharging)])
+            param_writer.writerow(["ChargingAvailability5.5.1", str(self.KPI551)])
+            param_writer.writerow(["ChargingAvailability5.5.2", str(self.KPI552)])
+            param_writer.writerow(["ChargingAvailability5.5.3", str(self.KPI553)])
+            param_writer.writerow(["ChargingAvailability5.5.4", str(self.KPI554)])
+            param_writer.writerow(["ChargingAvailability5.5.5", str(self.KPI555)])
+            param_writer.writerow(["ChargingAvailability5.5.6", str(self.KPI556)])
         with open(path + "/checks/kpis.js", "w") as json_file:
             json_file.write("kpis_values={rows:[")
             json_file.write('{id:1,data:[ "GC5.1","Number Of EVs",' + str(len(self.evList)) + ']},')
             json_file.write('{id:2,data:[ "GC5.2","Number Of CP",' + str(self.cpNum) + ']},')
-            json_file.write('{id:3,data:[ "GC5.14.1","Self Consumption",' + str(self.selfC) + ']},')
-            json_file.write('{id:4,data:[ "GC5.14.2","Self Consumption",' + str(self.selfsuff) + ']},')
+            json_file.write('{id:3,data:[ "GC5.14.1","Self Consumption",' + str(self.selfC*100) + ']},')
+            json_file.write('{id:4,data:[ "GC5.14.2","Self Consumption",' + str(self.selfsuff*100) + ']},')
 
             json_file.write('{id:5,data:[ "GC5.3.1","Utilisation Of CPs",' + str(self.KPI531) + ']},')
             json_file.write('{id:6,data:[ "GC5.3.2","Utilisation Of CPs",' + str(self.KPI532) + ']},')
@@ -574,7 +640,17 @@ class Checker:
             json_file.write(
                 '{id:11,data:[ "GC5.10","Peak To Average",' + str(self.peakToAverage) + ']},')
             json_file.write(']};')
-
+            json_file.write(
+                '{id:12,data:[ "GC5.3.4","Num of Charging",' + str(self.numcharging) + ']},')
+            json_file.write(']};')
+            json_file.write('{id:13,data:[ "GC5.5.1","Charging Availability",' + str(self.KPI551) + ']},')
+            json_file.write('{id:14,data:[ "GC5.5.2","Charging Availability",' + str(self.KPI552) + ']},')
+            json_file.write('{id:15,data:[ "GC5.5.3","Charging Availability",' + str(self.KPI553) + ']},')
+            json_file.write('{id:16,data:[ "GC5.5.4","Charging Availability",' + str(self.KPI554) + ']},')
+            json_file.write('{id:17,data:[ "GC5.5.5","Charging Availability",' + str(self.KPI555) + ']},')
+            json_file.write('{id:18,data:[ "GC5.5.6","Charging Availability",' + str(self.KPI556) + ']},')
+            json_file.write('{id:19,data:[ "GC5.10.2","Average Power",' + str(self.meanPower) + ']},')
+            json_file.write('{id:20,data:[ "GC5.10.3","Peak Power",' + str(self.peakPower) + ']},')
     def get_test_value(self):
         cwd = os.getcwd()
         cwd_parts = cwd.split("/")
