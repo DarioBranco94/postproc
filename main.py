@@ -7,6 +7,6 @@ if __name__ == "__main__":
 
     #visualization.callExternal("./08_16_21_11/")
 
-    checker.doChecks("./Simulations/08_16_21_11_booking/output", 1629072000,"./Simulations/08_16_21_11_booking/xml","./08_16_21_11")
+    checker.doChecks("./Simulations/08_16_21_11_nominal/output", 1629072000,"./Simulations/08_16_21_11_nominal/xml","./08_16_21_11")
     #shutil.copy('../../../../../../dockers/gcsim/gcsimulator/templates/checks.html', 'checks.html')
     ut.html_images("./")
