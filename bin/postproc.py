@@ -171,7 +171,7 @@ class Checker:
     def checkEnergyRespectToCapacityConstraint(self):
         for key, ev in self.evList.items():
             capacity = ev.capacity
-            if (float(self.energyChargedWithIdAsKey[key]) + (float(ev.soc) * float(capacity)) / 100 < float(capacity)):
+            if (round(float(self.energyChargedWithIdAsKey[key]) + (float(ev.soc) * float(capacity)) / 100,1) <= float(capacity)):
                 self.energy_respected_to_capacity[key] = 'Respected'
             else:
                 self.energy_respected_to_capacity[key] = 'Not Respected'
