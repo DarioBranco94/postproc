@@ -122,7 +122,7 @@ class Checker:
                 else:
                     self.consumerResampled[key] = ut.generatePowerTimeSeries(key, startTime)
         self.calculateSelfConsumption()
-        self.calculatePeakToAverage()
+        self.calculatePeakToAverage(startTime)
         self.readNeighborhoodXML(pathXML, startTime)
 
         self.readLoadXML(pathXML, startTime)
@@ -289,7 +289,7 @@ class Checker:
 
 
 
-    def calculatePeakToAverage(self):
+    def calculatePeakToAverage(self, startTime):
         totalpowTS = []
         for i in range(288):
             tempCon = 0
@@ -298,10 +298,15 @@ class Checker:
             totalpowTS.append(tempCon)
         energy = 0
         peakPow = totalpowTS[0]
+        count = 0
         for element in totalpowTS:
+            count +=1
             energy += element*(300/3600)
             if(element>peakPow):
                 peakPow = element
+                self.peakTime = count
+        self.peakTime = self.peakTime*300 + startTime
+        self.peakTime = time.strftime('%H:%M', time.localtime(self.peakTime - 7200))
         meanPow = energy/24
         self.meanPower = meanPow
         self.peakPower = peakPow
@@ -612,6 +617,7 @@ class Checker:
             param_writer.writerow(["PeakToAverage5.10.1", str(self.peakToAverage)])
             param_writer.writerow(["PeakToAverage (AVERAGE POWER) 5.10.2", str(self.meanPower)])
             param_writer.writerow(["PeakToAverage (PEAK POWER) 5.10.3", str(self.peakPower)])
+            param_writer.writerow(["PeakToAverage (PEAK Time) 5.10.4", str(self.peakTime)])
             param_writer.writerow(["NumOfCharging5.3.4", str(self.numcharging)])
             param_writer.writerow(["ChargingAvailability5.5.1", str(self.KPI551)])
             param_writer.writerow(["ChargingAvailability5.5.2", str(self.KPI552)])
@@ -651,6 +657,8 @@ class Checker:
             json_file.write('{id:18,data:[ "GC5.5.6","Charging Availability",' + str(self.KPI556) + ']},')
             json_file.write('{id:19,data:[ "GC5.10.2","Average Power",' + str(self.meanPower) + ']},')
             json_file.write('{id:20,data:[ "GC5.10.3","Peak Power",' + str(self.peakPower) + ']},')
+            json_file.write('{id:21,data:[ "GC5.10.4","Peak Time",' + str(self.peakTime) + ']},')
+
     def get_test_value(self):
         cwd = os.getcwd()
         cwd_parts = cwd.split("/")
