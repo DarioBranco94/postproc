@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<Neighborhood peakLoad2="38.4" id="99">
+	<fleet id="89">
+		<ecar>
+			<id>10</id>
+			<pat>27264</pat>
+			<pdt>35445</pdt>
+			<aat>27264</aat>
+			<adt>35445</adt>
+			<creation_time>0</creation_time>
+			<soc>50</soc>
+			<targetSoc>100</targetSoc>
+			<V2G>0</V2G>
+			<priority>0</priority>
+			<type>load</type>
+		</ecar>
+		<ecar>
+			<id>5</id>
+			<pat>32136</pat>
+			<pdt>43441</pdt>
+			<aat>32136</aat>
+			<adt>43441</adt>
+			<creation_time>0</creation_time>
+			<soc>30</soc>
+			<targetSoc>100</targetSoc>
+			<V2G>0</V2G>
+			<priority>0</priority>
+			<type>load</type>
+		</ecar>
+
+		<ecar>
+			<id>6</id>
+			<pat>43351</pat>
+			<pdt>48501</pdt>
+			<aat>43351</aat>
+			<adt>48501</adt>
+			<creation_time>0</creation_time>
+			<soc>68</soc>
+			<targetSoc>100</targetSoc>
+			<V2G>0</V2G>
+			<priority>0</priority>
+			<type>load</type>
+		</ecar>
+	</fleet>
+	<chargingStation id="1" peakLoad="22" code="P2D1L3">
+		<user id="0">
+			<device>
+				<name>pv_5</name>
+				<id>5</id>
+				<est>0</est>
+				<lst>0</lst>
+				<creation_time>0</creation_time>
+				<type>load</type>
+				<energy_cost>load</energy_cost>
+				<profile>2021-08-16-65c8f088-633d-4a87-9f07-e6f92f0e63c9.csv</profile>
+			</device>
+
+			<battery>
+				<id>1</id>
+				<targetSoc>85</targetSoc>
+				<soc>15</soc>
+				<creation_time>60</creation_time>
+				<endTime>86340</endTime>
+				<startTime>61</startTime>
+				<type>load</type>
+			</battery>
+			<battery>
+				<id>2</id>
+				<targetSoc>85</targetSoc>
+				<soc>15</soc>
+				<creation_time>60</creation_time>
+				<endTime>86340</endTime>
+				<startTime>61</startTime>
+				<type>load</type>
+			</battery>
+			<battery>
+				<id>3</id>
+				<targetSoc>86</targetSoc>
+				<soc>12</soc>
+				<creation_time>60</creation_time>
+				<endTime>86340</endTime>
+				<startTime>61</startTime>
+				<type>load</type>
+			</battery>
+			<battery>
+				<id>4</id>
+				<targetSoc>89</targetSoc>
+				<soc>14</soc>
+				<creation_time>60</creation_time>
+				<endTime>86340</endTime>
+				<startTime>61</startTime>
+				<type>load</type>
+			</battery>
+		</user>
+	</chargingStation>
+	<chargingStation id="2" peakLoad="10" code="P1D3L6">
+		<user id="0">
+			<heatercooler>
+				<id>1</id>
+				<profile>2021-08-16-6_0.csv</profile>
+			</heatercooler>
+			<heatercooler>
+				<id>2</id>
+				<profile>2021-08-16-8_0.csv</profile>
+			</heatercooler>
+			<heatercooler>
+				<id>3</id>
+				<profile>2021-08-16-10_1.csv</profile>
+			</heatercooler>
+		</user>
+	</chargingStation>
+</Neighborhood>

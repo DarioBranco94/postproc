@@ -1,0 +1,15 @@
+Total_Energy_Consumption;1957.349986267087
+Total_Energy_Production;67884.589
+Number_of_Timeseries;11
+Energy_charged;70.45
+Self_Consumption;0.43552348187437956
+Assigned Start Time List;{}
+ast_lst_List;{}
+AstLstContraintRespected;{}
+PowerPeaksReached;{}
+PowerPeaksLimits;{'[1]': '22', '[2]': '10'}
+PowerPeaksLimitsReached;{}
+Energy_Charged_respect_to_capacity;{'[10]': 'Not Respected', '[5]': 'Not Respected', '[6]': 'Not Respected'}
+Energy_Charged_respect_to_Connection;{'[10]': 'Respected', '[5]': 'Respected', '[6]': 'Respected'}
+Energy_AutoConsumed_Respect_To_Energy_Produced;Respected
+Charging_Power_Lower_than_Maximum;{'[10]': 'NotRespected', '[5]': 'Respected', '[6]': 'NotRespected'}
