@@ -4,9 +4,9 @@
 		<ecar>
 			<id>10</id>
 			<pat>27264</pat>
-			<pdt>35445</pdt>
+			<pdt>35205</pdt>
 			<aat>27264</aat>
-			<adt>35445</adt>
+			<adt>35205</adt>
 			<creation_time>0</creation_time>
 			<soc>50</soc>
 			<targetSoc>100</targetSoc>
@@ -17,12 +17,12 @@
 		<ecar>
 			<id>5</id>
 			<pat>32136</pat>
-			<pdt>43441</pdt>
+			<pdt>38271</pdt>
 			<aat>32136</aat>
-			<adt>43441</adt>
+			<adt>38271</adt>
 			<creation_time>0</creation_time>
 			<soc>30</soc>
-			<targetSoc>100</targetSoc>
+			<targetSoc>68</targetSoc>
 			<V2G>0</V2G>
 			<priority>0</priority>
 			<type>load</type>
@@ -31,9 +31,9 @@
 		<ecar>
 			<id>6</id>
 			<pat>43351</pat>
-			<pdt>48501</pdt>
+			<pdt>48516</pdt>
 			<aat>43351</aat>
-			<adt>48501</adt>
+			<adt>48516</adt>
 			<creation_time>0</creation_time>
 			<soc>68</soc>
 			<targetSoc>100</targetSoc>

@@ -22,7 +22,7 @@
 			<adt>61200</adt>
 			<creation_time>0</creation_time>
 			<soc>30</soc>
-			<targetSoc>100</targetSoc>
+			<targetSoc>68</targetSoc>
 			<V2G>0</V2G>
 			<priority>0</priority>
 			<type>load</type>

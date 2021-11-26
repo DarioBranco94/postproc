@@ -514,10 +514,10 @@ class Checker:
                     plug_out_time = float(row[0])
             connectedTime += ev.adt - ev.aat
             chargingTime += plug_out_time - plug_in_time
-            chargedEnergy += ev.capacity * (ev.targetSoc - ev.soc)
+            chargedEnergy += ev.capacity * (ev.targetSoc - ev.soc)/100
         self.KPI531 = connectedTime / timespan
         self.KPI532 = chargingTime / connectedTime
-        self.KPI533 = chargedEnergy / connectedTime
+        self.KPI533 = 3600*(chargedEnergy / connectedTime)
 
     def writeOutput(self, path):
 
