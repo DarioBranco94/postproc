@@ -1,0 +1,1 @@
+data={rows:[{id:1,data:[ "Total_Energy_Consumption","70.44999999999709","","",""]},{id:2,data:[ "Total_Energy_Production","67884.589","","",""]},{id:3,data:[ "Assigned Start Time List","{}","","",""]},{id:4,data:[ "Energy_charged","70.45","","",""]},{id:5,data:[ "Number_of_Timeseries","8","","",""]},{id:6,data:[ "Self_Consumption","0.8219088265776924","","",""]},]};

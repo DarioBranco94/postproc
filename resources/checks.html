@@ -1,0 +1,99 @@
+<html>
+<head>
+<!--https://dhtmlx.com/docs/products/visualDesigner/live/#g40o46-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="stylesheet" type="text/css" href="../../../dhtmlx/codebase/fonts/font_roboto/roboto.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../dhtmlx/codebase/dhtmlx.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../dhtmlx/skins/web/dhtmlx.css"/>
+	<!--
+	<link rel="stylesheet" type="text/css" href="../../../dhtmlx/skins/terrace/dhtmlx.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../dhtmlx/skins/skyblue/dhtmlx.css"/>
+	-->
+	<script src="../../../dhtmlx/codebase/dhtmlx.js"></script>
+	<script src="./output/checks/parameters.js"></script>
+	<script src="./output/checks/checks.js"></script>
+	<script src="./output/checks/kpis.js"></script>
+	
+	
+ 	
+	<style>
+		div#layoutObj {
+			position: relative;
+			margin-top: 0px;
+			margin-left: 10px;
+			width: 1600px;
+			height: 1000px;
+		}
+	</style>
+	
+
+<script>
+	
+function doOnLoad(){
+	window.dhx4.skin = 'dhx_web';
+	var main_layout = new dhtmlXLayoutObject(document.body, '1C');
+
+	var a = main_layout.cells('a');
+	a.setText('Simulation Results');
+	var sidebar = a.attachSidebar({template: 'details', width: '200', icons_path: '../../../dhtmlx/codebase/imgs_sidebar/', autohide: '', header: ''});
+	sidebar.addItem({id: 'parameters', text: 'parameters', icon: 'sidebar_item_icon.png'});
+	var parameters = sidebar.cells('parameters');
+	parameters.setActive();
+	var parameters_grid = parameters.attachGrid();
+	parameters_grid.setIconsPath('../../../codebase/imgs/');
+	
+	parameters_grid.setHeader(["Parameter","Simulated Value","Expected Value","Error"]);
+	parameters_grid.setColTypes("ro,ro,ro,ro");
+	
+	parameters_grid.setColSorting('str,str,str,str');
+	parameters_grid.setInitWidths('*,*,*,*');
+	parameters_grid.init();
+	parameters_grid.parse(data,"json");
+	
+
+
+	sidebar.addItem({id: 'checks', text: 'checks', icon: 'sidebar_item_icon.png'});
+	var checks = sidebar.cells('checks');
+	var checks_grid = checks.attachGrid();
+	checks_grid.setIconsPath('../../../codebase/imgs/');
+	
+	checks_grid.setHeader(["Choerency Rule","Result","Note"]);
+	checks_grid.setColTypes("ro,ro,ro");
+	
+	checks_grid.setColSorting('str,str,str');
+	checks_grid.setInitWidths('*,*,*');
+	checks_grid.init();
+	checks_grid.parse(coherence_checks,"json");
+
+	sidebar.addItem({id: 'inputs', text: 'inputs', icon: 'sidebar_item_icon.png'});
+
+
+	sidebar.addItem({id: 'outputs', text: 'outputs', icon: 'sidebar_item_icon.png'})
+	var output_item = sidebar.cells('outputs');
+	output_item.attachURL('output/index.html');
+
+	sidebar.addItem({id: 'kpis', text: 'kpis', icon: 'sidebar_item_icon.png'})
+	var kpis_item = sidebar.cells('kpis');
+	var kpis_grid = kpis_item.attachGrid();
+	kpis_grid.setIconsPath('../../../codebase/imgs/');
+
+	kpis_grid.setHeader(["ID", "Name","Value"]);
+	kpis_grid.setColTypes("ro,ro,ro");
+
+	kpis_grid.setColSorting('str,str,str');
+	kpis_grid.setInitWidths('*,*,*');
+	kpis_grid.init();
+	kpis_grid.parse(kpis_values,"json");
+
+
+}
+
+
+</script>
+
+</head>
+<body>
+	<body onload="doOnLoad();">
+	<div id="layoutObj"></div>
+
