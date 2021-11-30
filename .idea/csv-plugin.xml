@@ -3,7 +3,21 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\SImulations\08_16_21_11\output\checks\kpi.csv">
+        <entry key="\SImulations\08_16_21_11\output\EV\[99]_[10].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SImulations\08_16_21_11\output\EV\[99]_[5].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SImulations\08_16_21_11\output\EV\[99]_[6].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -17,17 +31,24 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\SImulations\08_16_21_11_booking\output\checks\kpi.csv">
+        <entry key="\SImulations\08_16_21_11_booking\output\EV\[99]_[10].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\SImulations\08_16_21_11_booking\output\checks\outputParam.csv">
+        <entry key="\SImulations\08_16_21_11_booking\output\EV\[99]_[5].csv">
           <value>
             <Attribute>
-              <option name="separator" value=";" />
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SImulations\08_16_21_11_booking\output\EV\[99]_[6].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
