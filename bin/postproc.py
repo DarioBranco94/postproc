@@ -131,6 +131,7 @@ class Checker:
         self.readNeighborhoodXML(pathXML, startTime)
 
         self.readLoadXML(pathXML, startTime)
+        ut.printChilds(self.root)
         # sumForPowerPeak(self.root, self.powerPeakListFiles)
         # findPeak(self.root, self.listOfPeaks)
         # self.checkPowerPeakConstraint()
@@ -151,15 +152,81 @@ class Checker:
         xnew = np.arange(startTime, endTime, 300)
         fig = plt.figure()
         xhh = []
-
+        consumers = []
+        producers = []
+        countCons = 0
+        countProd = 0
         for element in xnew:
             xhh.append(time.strftime('%H:%M', time.localtime(element - 7200)))  # aggiusto la timezone
         for key, element in self.consumerResampled.items():
+            i = 0
+            for k in element:
+                if(countCons == 0):
+                    consumers.append(k)
+                else:
+                    consumers[i] += k
+                i+=1
+            countCons +=1
             plt.plot(xhh, element)
         for key, element in self.pvListResampled.items():
+            i = 0
+            for k in element:
+                if (countProd == 0):
+                    producers.append(k)
+                else:
+                    producers[i] += k
+                i+=1
+            countProd += 1
             plt.plot(xhh, element)
         plt.xticks(np.arange(0, 288, 35))
         fig.savefig(path + '/results.png', dpi=fig.dpi)
+        fig = plt.figure()
+        plt.plot(xhh,producers)
+        plt.plot(xhh,consumers)
+        plt.xticks(np.arange(0, 288, 35))
+        fig.savefig(path + '/resultsTot.png', dpi=fig.dpi)
+        with open(path + '/tot_consumption_pow.csv', 'w') as writeFile:
+            param_writer = csv.writer(writeFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            i=0
+            for row in consumers:
+                param_writer.writerow([xhh[i], row])
+                i+=1
+
+        with open(path + '/tot_production_pow.csv', 'w') as writeFile:
+            param_writer = csv.writer(writeFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            i=0
+            for row in producers:
+                param_writer.writerow([xhh[i], row])
+                i+=1
+
+        consenTot = []
+        with open(path + '/tot_consumption.csv', 'w') as writeFile:
+            param_writer = csv.writer(writeFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            i=0
+            lastVal = 0
+            for row in consumers:
+                lastVal += float(row)*12
+                consenTot.append(lastVal)
+                param_writer.writerow([xhh[i], lastVal]) #NOTA CHE STO CONVERTENDO IN ENERGIA CUMULATIVA, IL PER 12 É PERCHÉ I CAMPIONI SONO DI 300 SECONDI
+                i+=1
+        prodenTot = []
+
+        with open(path + '/tot_production.csv', 'w') as writeFile:
+            param_writer = csv.writer(writeFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            i=0
+            lastVal = 0
+            for row in producers:
+                lastVal += float(row)*12
+                prodenTot.append(lastVal)
+
+                param_writer.writerow([xhh[i], lastVal]) #NOTA CHE STO CONVERTENDO IN ENERGIA CUMULATIVA, IL PER 12 É PERCHÉ I CAMPIONI SONO DI 300 SECONDI
+                i+=1
+        fig = plt.figure()
+        plt.plot(xhh,prodenTot)
+        plt.plot(xhh,consenTot)
+        plt.xticks(np.arange(0, 288, 35))
+        fig.savefig(path + '/resultsTotEn.png', dpi=fig.dpi)
+
 
     def checkChargingPowerLowerThanMaxChPowConstraint(self, startTime):
         """
@@ -255,11 +322,11 @@ class Checker:
         tree = ET.parse(pathXML + '/loads.xml')
         neighborhood = tree.getroot()
         buildingID = "["
-        self.root = nd.Node("root")
+        self.root = nd.Node("root",neighborhood.attrib['peakLoad2'])
         for elem in neighborhood:
             buildingID = "["
-            # print(elem)
-            # elemNode = self.root.addChild("[" + elem.attrib['id'] + "]")
+            if(elem.tag != 'fleet'):
+                elemNode = self.root.addChild("[" + elem.attrib['id'] + "]", elem.attrib['peakLoad'])
             if 'peakLoad' in elem.attrib:
                 buildingID += elem.attrib['id'] + "]"
                 self.peakLoadList[buildingID] = elem.attrib['peakLoad']

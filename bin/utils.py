@@ -3,16 +3,10 @@ from os import path
 import os
 import csv
 import glob
-import xml.etree.ElementTree as ET
 import shutil
 from scipy import interpolate
-import matplotlib.pyplot as plt
 import numpy as np
-from bin import visualization
-import sqlite3
-from bin import config
 import datetime
-import json
 
 
 
@@ -39,9 +33,10 @@ def printChilds(node):
     Args:
         node:
     """
-
-    for i in range(0, 287):
-        print(node.data[i])
+    print(node.name)
+    print(node.peak)
+    #for i in range(0, 287):
+    #    print(node.data[i])
     for childNode in node.children:
         printChilds(childNode)
 
@@ -123,7 +118,6 @@ def generatePowerTimeSeries(file, startTime):
     with open(file, newline='') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=",")
         count = 0
-
         x = []  # lista dei tempi della timeseries
         y = []  # lista dei valori della timeseries
         lastSample = 0  # Questo mi serve per tenermi in memoria il tempo precedente alla riga che sto leggendo, cosi posso farmi il delta per la trasformazione in potenza

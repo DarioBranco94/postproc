@@ -94,6 +94,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\Simulations\08_16_21_11\output\EV\[99]_[10].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\Simulations\08_16_21_11\output\EV\[99]_[6].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\Simulations\08_16_21_11_booking\Results\test\output\tot_consumption.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
